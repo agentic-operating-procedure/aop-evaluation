@@ -79,13 +79,38 @@ def escalation_precision(cases: list[dict], warrant_threshold: float = 0.5) -> f
     return round(warranted / escalated, 3) if escalated else None
 
 
-def baseline(cases: list[dict]) -> dict:
+def filter_human(cases: list[dict]) -> tuple[list[dict], list[dict]]:
+    """NM-CTL-6 / CR-013: split the corpus by case origin. Human-originated
+    cases form the baseline and the protected reservoir; agent-originated
+    cases are excluded from baseline mining by default. Cases without a
+    declared origin are treated as human (pre-dating origin tagging) and the
+    undeclared share is reported."""
+    human = [c for c in cases if c.get("origin", "human") != "agent"]
+    agent = [c for c in cases if c.get("origin") == "agent"]
+    undeclared = sum(1 for c in cases if "origin" not in c)
+    return human, agent
+
+
+def baseline(cases: list[dict], exclude_agent_origin: bool = True) -> dict:
     """The human baseline: the observed human values for the domain metrics
-    (NM-ASR-2), extracted from the observed corpus."""
+    (NM-ASR-2), extracted from the observed corpus. Agent-originated cases
+    are excluded by default (loop hygiene, CR-013); the corpus quality block
+    reports the origin mix and any undeclared origins."""
+    if exclude_agent_origin:
+        human, agent = filter_human(cases)
+    else:
+        human, agent = cases, []
     return {
-        "mttr_p50_minutes": cycle_time_p50(cases),
-        "first_pass_resolution": first_pass_resolution(cases),
-        "exception_rate": exception_rate(cases),
-        "escalation_precision": escalation_precision(cases),
+        "mttr_p50_minutes": cycle_time_p50(human),
+        "first_pass_resolution": first_pass_resolution(human),
+        "exception_rate": exception_rate(human),
+        "escalation_precision": escalation_precision(human),
         "metric_bindings": METRIC_BINDINGS,
+        "corpus_quality": {
+            "total_cases": len(cases),
+            "human_or_undeclared": len(human),
+            "agent_origin_excluded": len(agent),
+            "undeclared_origin": sum(1 for c in cases if "origin" not in c),
+            "reservoir_note": "agent-originated cases are excluded from the baseline and the protected human reservoir is the human-originated set (CR-013)",
+        },
     }
