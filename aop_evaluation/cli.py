@@ -27,7 +27,7 @@ def main(argv=None):
     p.add_argument("--aop", required=True)
     p.add_argument("--cases", required=True)
     p.add_argument("--harness-home", default=None)
-    p.add_argument("--action", default="dispatch-field-crew")
+    p.add_argument("--actions", default=None, help="comma-separated action filter; default evaluates every action the agent would propose")
     p.add_argument("--out", default="-")
     p.add_argument("--report-dir", default=None)
 
@@ -38,7 +38,8 @@ def main(argv=None):
         result = baseline(cases)
     else:
         harness_home = args.harness_home or str(Path(__file__).resolve().parent.parent.parent / "aop-reference-harness")
-        report = shadow_evaluate(args.aop, args.cases, harness_home, args.action)
+        actions = args.actions.split(",") if args.actions else None
+        report = shadow_evaluate(args.aop, args.cases, harness_home, actions)
         bl = baseline([json.loads(l) for l in open(args.cases) if l.strip()])
         result = dict(report)
         result["phase5_reading"] = compare_with_baseline(report, bl)
