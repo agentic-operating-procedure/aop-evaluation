@@ -22,7 +22,8 @@ Found and corrected against the 5G exemplar corpus; the fault management regress
 - The fixture shadow run reports agreement 1.0 within the promotion band, framed honestly as rule fidelity against the compiled corpus, not live generalisation.
 - Published the reproducibility protocol: standard library only, deterministic, version-pinned, machine-diffable reports.
 
-[Unreleased]: https://github.com/agentic-operating-procedure/aop-evaluation/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/agentic-operating-procedure/aop-evaluation/compare/v0.3.0...HEAD
+[v0.3.0]: https://github.com/agentic-operating-procedure/aop-evaluation/compare/v0.2.0...v0.3.0
 [v0.2.0]: https://github.com/agentic-operating-procedure/aop-evaluation/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/agentic-operating-procedure/aop-evaluation/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/agentic-operating-procedure/aop-evaluation/releases/tag/v0.1.0

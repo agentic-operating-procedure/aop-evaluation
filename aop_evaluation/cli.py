@@ -28,6 +28,8 @@ def main(argv=None):
     p.add_argument("--cases", required=True)
     p.add_argument("--harness-home", default=None)
     p.add_argument("--actions", default=None, help="comma-separated action filter; default evaluates every action the agent would propose")
+    p.add_argument("--cohort", default="development", choices=["development", "held-out", "prospective"],
+                   help="the cohort label; EV-P2 requires the label to match the corpus provenance")
     p.add_argument("--out", default="-")
     p.add_argument("--report-dir", default=None)
 
@@ -39,7 +41,7 @@ def main(argv=None):
     else:
         harness_home = args.harness_home or str(Path(__file__).resolve().parent.parent.parent / "aop-reference-harness")
         actions = args.actions.split(",") if args.actions else None
-        report = shadow_evaluate(args.aop, args.cases, harness_home, actions)
+        report = shadow_evaluate(args.aop, args.cases, harness_home, actions, cohort_label=args.cohort)
         bl = baseline([json.loads(l) for l in open(args.cases) if l.strip()])
         result = dict(report)
         result["phase5_reading"] = compare_with_baseline(report, bl)

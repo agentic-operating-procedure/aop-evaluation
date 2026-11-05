@@ -7,7 +7,7 @@
 | Authority | Whether the method produces a measured result: baselines, shadow mode, metrics, reproducibility |
 | Tier | Evaluation |
 | Landing wave | 5 |
-| Version | 0.2.0 |
+| Version | 0.3.0 |
 | Status | Stable |
 | Licence | MIT |
 

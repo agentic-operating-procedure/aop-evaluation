@@ -82,7 +82,7 @@ def agent_choice(guardrail, variant, action: str, context: dict) -> str:
     }[decision["decision"]]
 
 
-def shadow_evaluate(aop_path: str, cases_path: str, harness_home: str, actions: list[str] | None = None) -> dict:
+def shadow_evaluate(aop_path: str, cases_path: str, harness_home: str, actions: list[str] | None = None, cohort_label: str = "development") -> dict:
     """Run the shadow-mode comparison over the corpus. Every action the agent
     would propose per case is compared with what the human did on it."""
     guardrail_m = load_guardrail(harness_home)
@@ -147,6 +147,8 @@ def shadow_evaluate(aop_path: str, cases_path: str, harness_home: str, actions: 
         "approver_roles": sorted(roles),
         "ran_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "mode": "observation-only: nothing executed",
+        "cohort": cohort_label,
+        "claim_class": "rule-fidelity" if cohort_label == "development" else "generalisation",
         "cases": len({r["case_id"] for r in results}),
         "comparisons": len(decided),
         "agreement_rate": round(len(agreements) / len(decided), 3) if decided else None,
